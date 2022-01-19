@@ -18,7 +18,11 @@ export function useFocus(data, callback) {
     e.preventDefault()
     e.stopPropagation()
     if (e.shiftKey) {
-      block.focus = !block.focus
+      if (focusData.value.focus.length <= 1) {
+        block.focus = true
+      } else {
+        block.focus = !block.focus
+      }
     } else {
       if (!block.focus) {
         clearBlockFocus()
