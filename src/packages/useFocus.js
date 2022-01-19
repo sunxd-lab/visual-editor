@@ -1,20 +1,22 @@
-import { computed } from "vue"
+import { computed, ref } from "vue"
 
 export function useFocus(data, callback) {
+  const selectIndex = ref(-1);  // 表示没有任何一个被选中
+  const lastSelectedBlock = computed(() => data.value.blocks[selectIndex.value])
   // 方便后面移动选中的元素
   const focusData = computed(() => {
     const focus = []
-    const unFocus = []
-    data.value.blocks.forEach(block => (block.focus ? focus : unFocus).push(block))
+    const unfocused = []
+    data.value.blocks.forEach(block => (block.focus ? focus : unfocused).push(block))
     return {
       focus,
-      unFocus
+      unfocused
     }
   })
   const clearBlockFocus = () => {
     data.value.blocks.forEach(block => block.focus = false)
   }
-  const blockMousedown = (e, block) => {
+  const blockMousedown = (e, block, index) => {
     e.preventDefault()
     e.stopPropagation()
     if (e.shiftKey) {
@@ -29,14 +31,17 @@ export function useFocus(data, callback) {
         block.focus = true
       }
     }
+    selectIndex.value = index
     callback(e)
   }
   const containerMousedown = (e) => {
+    selectIndex.value = -1
     clearBlockFocus()
   }
   return {
     blockMousedown,
     containerMousedown,
-    focusData
+    focusData,
+    lastSelectedBlock
   }
 }

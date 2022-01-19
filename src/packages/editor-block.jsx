@@ -22,6 +22,8 @@ export default defineComponent({
         block.top = block.top - offsetHeight / 2;
         block.alignCenter = false
       } 
+      block.width = offsetWidth
+      block.height = offsetHeight
     })
 
     return () => {

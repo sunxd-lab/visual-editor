@@ -34,9 +34,13 @@ export default defineComponent({
     // 拖拽功能
     const { dragstart, dragend } = useMenuDragger(containerRef, data)
     // 获取焦点
-    const { blockMousedown, containerMousedown, focusData } = useFocus(data, (e) => mousedown(e))
-    const { mousedown } = useBlockDragger(focusData)
-
+    const { 
+      blockMousedown, 
+      containerMousedown, 
+      focusData, 
+      lastSelectedBlock
+    } = useFocus(data, (e) => mousedown(e))
+    const { mousedown } = useBlockDragger(focusData, lastSelectedBlock)
 
     // 内部拖拽多个元素
 
@@ -68,11 +72,11 @@ export default defineComponent({
               style={containerStyles.value}
               onMousedown={containerMousedown}
             >
-              {data.value.blocks.map(block => (
+              {data.value.blocks.map((block, index) => (
                 <EditorBlock
                   class={block.focus ? 'editor-block-focus' : ''}
                   block={block}
-                  onMousedown={(e) => blockMousedown(e, block)}
+                  onMousedown={(e) => blockMousedown(e, block, index)}
                 ></EditorBlock>
               ))}
             </div>
