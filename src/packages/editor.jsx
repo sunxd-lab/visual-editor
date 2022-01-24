@@ -34,15 +34,19 @@ export default defineComponent({
     // 拖拽功能
     const { dragstart, dragend } = useMenuDragger(containerRef, data)
     // 获取焦点
-    const { 
-      blockMousedown, 
-      containerMousedown, 
-      focusData, 
+    const {
+      blockMousedown,
+      containerMousedown,
+      focusData,
       lastSelectedBlock
     } = useFocus(data, (e) => mousedown(e))
-    const { mousedown } = useBlockDragger(focusData, lastSelectedBlock)
+    const { mousedown, markLine } = useBlockDragger(focusData, lastSelectedBlock, data)
 
-    // 内部拖拽多个元素
+    const { commands } = useCommand(data)
+    const buttons = [
+      { label: '撤销', icon: 'icon-back', handler: () => commands.undo() },
+      { label: '重做', icon: 'icon-forward', handler: () => commands.redo() }
+    ]
 
     return () => (
       <div class="editor">
@@ -79,6 +83,8 @@ export default defineComponent({
                   onMousedown={(e) => blockMousedown(e, block, index)}
                 ></EditorBlock>
               ))}
+              {markLine.x !== null && <div class="line-x" style={{ left: markLine.x + 'px' }}></div>}
+              {markLine.y !== null && <div class="line-y" style={{ top: markLine.y + 'px' }}></div>}
             </div>
           </div>
         </div>
