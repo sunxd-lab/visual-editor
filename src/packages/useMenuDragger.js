@@ -1,3 +1,5 @@
+import { events } from "./events"
+
 export function useMenuDragger(containerRef, data) {
   let currentComponent = null
   const dragenter = (e) => {
@@ -37,6 +39,8 @@ export function useMenuDragger(containerRef, data) {
     containerRef.value.addEventListener('dragover', dragover)
     containerRef.value.addEventListener('dragleave', dragleave)
     containerRef.value.addEventListener('drop', drop)
+    // 拖拽前订阅start事件
+    events.emit('start')
   }
 
   const dragend = (e) => {
@@ -44,6 +48,9 @@ export function useMenuDragger(containerRef, data) {
     containerRef.value.removeEventListener('dragover', dragover)
     containerRef.value.removeEventListener('dragleave', dragleave)
     containerRef.value.removeEventListener('drop', drop)
+    // 放置后订阅end
+    console.log('e');
+    events.emit('end')
   }
 
   return {

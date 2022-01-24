@@ -3,6 +3,7 @@ import { computed, defineComponent, inject, ref } from "vue";
 import EditorBlock from "./editor-block";
 import "./editor.scss"
 import { useBlockDragger } from "./useBlockDragger";
+import { useCommand } from "./useCommand";
 import { useFocus } from "./useFocus";
 import { useMenuDragger } from "./useMenuDragger";
 
@@ -56,17 +57,23 @@ export default defineComponent({
               class="editor-left-item"
               draggable
               onDragstart={(e) => {
-                console.log(e)
                 dragstart(e, component)
               }}
-              onDragEnd={dragend}
+              onDragend={dragend}
             >
               <span>{component.label}</span>
               {component.preview()}
             </div>
           ))}
         </div>
-        <div class="editor-top">菜单栏</div>
+        <div class="editor-top">
+          {buttons.map((button, index) => (
+            <div class="editor-top-button" onClick={button.handler}>
+              <i class={`iconfont ${button.icon}`}></i>
+              <span>{button.label}</span>
+            </div>
+          ))}
+        </div>
         <div class="editor-right">属性控制栏目</div>
         <div class="editor-container">
           <div class="editor-container-canvas">

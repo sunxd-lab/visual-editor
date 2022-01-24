@@ -1,7 +1,9 @@
+@import url("../assets/iconfont/iconfont.css");
 .editor {
   width: 100%;
   height: 100%;
-  &-left, &-right {
+  &-left,
+  &-right {
     position: absolute;
     width: 270px;
     background-color: #f2f2f2;
@@ -22,7 +24,7 @@
       box-sizing: border-box;
       user-select: none;
       position: relative;
-      >span {
+      > span {
         position: absolute;
         top: 0;
         left: 0;
@@ -36,7 +38,7 @@
         cursor: move;
       }
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -55,7 +57,23 @@
     right: 280px;
     left: 280px;
     height: 80px;
-    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-button {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      cursor: pointer;
+      &+& {
+        margin-left: 3px;
+      }
+    }
   }
   &-container {
     padding: 80px 270px 0;
@@ -76,7 +94,7 @@
 .editor-block {
   position: absolute;
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -89,4 +107,17 @@
   &::after {
     border: 1px dashed cyan;
   }
+}
+
+.line-x {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed red;
+}
+.line-y {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed red;
 }
