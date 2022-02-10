@@ -4,6 +4,7 @@ import { computed, defineComponent, inject, ref } from "vue";
 import { $dialog } from "../components/Dialog";
 import { $dropdown, DropdownItem } from "../components/Dropdown";
 import EditorBlock from "./editor-block";
+import EditorOperator from "./editor-operator";
 import "./editor.scss"
 import { useBlockDragger } from "./useBlockDragger";
 import { useCommand } from "./useCommand";
@@ -158,7 +159,10 @@ export default defineComponent({
             )
           })}
         </div>
-        <div class="editor-right">属性控制栏目</div>
+        {/* 属性控制栏目 */}
+        <div class="editor-right">
+          <EditorOperator block={lastSelectedBlock.value} data={data.value}></EditorOperator>
+        </div>
         <div class="editor-container">
           <div class="editor-container-canvas">
             <div
