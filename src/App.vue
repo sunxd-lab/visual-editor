@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
-    <Editor v-model="state" />
-  </div>
+  <Editor v-model="state" />
 </template>
 
 <script>
@@ -27,9 +25,10 @@ export default {
 <style lang="scss">
 #app {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
+  top: 0.2667rem;
+  left: 0.2667rem;
+  right: 0.2667rem;
+  bottom: 0.2667rem;
+  overflow-y: auto;
 }
 </style>

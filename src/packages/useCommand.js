@@ -2,7 +2,7 @@ import deepcopy from "deepcopy"
 import { onUnmounted } from "vue"
 import { events } from "./events"
 
-export function useCommand(data) {
+export function useCommand(data, focusData) {
   /* 
     current 前进后退的索引
     queue 操作过的指令
@@ -21,12 +21,12 @@ export function useCommand(data) {
 
   const registry = (command) => {
     state.commandArray.push(command)
-    state.commands[command.name] = () => {
-      const { redo, undo } = command.execute()
+    state.commands[command.name] = (...args) => {
+      const { redo, undo } = command.execute(...args)
       redo()
       if (!command.pushQueue) return
       let { queue, current } = state
-      // 保存指令的亲啊进后退
+      // 保存指令的前进后退
       if (queue.length > 0) {
         // 可能在拖拽过程中有撤销，所以根据当前最新的current值来计算新的队列
         queue = queue.slice(0, current + 1)
@@ -110,6 +110,159 @@ export function useCommand(data) {
       }
     }
   });
+
+  // 更新整个容器, 带有历史记录的常用套路
+  registry({
+    name: 'updateContainer',
+    pushQueue: true,
+    execute(newValue) {
+      let state = {
+        before: deepcopy(data.value),
+        after: newValue
+      }
+      return {
+        redo() {
+          data.value = state.after
+        },
+        undo() {
+          data.value = state.before
+        }
+      }
+    }
+  })
+
+  registry({
+    name: 'updateBlock',
+    pushQueue: true,
+    execute(newBlock, oldBlock) {
+      let state = {
+        before: deepcopy(data.value.blocks),
+        after: (() => {
+          const blocks = [...data.value.blocks]
+          const index = data.value.blocks.indexOf(oldBlock)
+          if (index > -1) {
+            blocks.splice(index, 1, newBlock)
+          }
+          return blocks
+        })()
+      }
+      return {
+        redo() {
+          data.value = {
+            ...data.value,
+            blocks: state.after
+          }
+        },
+        undo() {
+          data.value = {
+            ...data.value,
+            blocks: state.before
+          }
+        }
+      }
+    }
+  })
+
+  // 置顶
+  registry({
+    name: 'placeTop',
+    pushQueue: true,
+    execute() {
+      const before = deepcopy(data.value.blocks)
+      const after = (() => {
+        // 在所有的blocks中，找到最大的
+        const { focus, unfocused } = focusData.value
+        const maxZIndex = unfocused.reduce((prev, block) => {
+          return Math.max(prev, block.zIndex)
+        }, -Infinity)
+        focus.forEach((block) => block.zIndex = maxZIndex + 1) // 让当前选中的比最大值加1
+        return data.value.blocks
+      })()
+
+      return {
+        redo() {
+          data.value = {
+            ...data.value,
+            blocks: after
+          }
+        },
+        undo() {
+          // 如果当前blocks前后一置，不会更新
+          data.value = {
+            ...data.value,
+            blocks: before
+          }
+        }
+      }
+    }
+  })
+
+  registry({
+    name: 'placeBottom',
+    pushQueue: true,
+    execute() {
+      const before = deepcopy(data.value.blocks)
+      const after = (() => {
+        // 在所有的blocks中，找到最大的
+        const { focus, unfocused } = focusData.value
+        let minZIndex = unfocused.reduce((prev, block) => {
+          return Math.min(prev, block.zIndex)
+        }, Infinity) - 1
+        // 不能直接-1，因为z-index不能为负
+        if (minZIndex < 0) {
+          // 如果最小已经是负值，则让每选中的向上，自己为0
+          const dur = Math.abs(minZIndex)
+          minZIndex = 0
+          unfocused.forEach(block => block.zIndex += dur)
+        }
+        focus.forEach((block) => block.zIndex = minZIndex)
+        return data.value.blocks
+      })()
+
+      return {
+        redo() {
+          data.value = {
+            ...data.value,
+            blocks: after
+          }
+        },
+        undo() {
+          // 如果当前blocks前后一置，不会更新
+          data.value = {
+            ...data.value,
+            blocks: before
+          }
+        }
+      }
+    }
+  })
+
+  registry({
+    name: 'delete',
+    pushQueue: true,
+    execute() {
+      let state = {
+        before: deepcopy(data.value.blocks),
+        after: focusData.value.unfocused
+      }
+
+      return {
+        redo() {
+          data.value = {
+            ...data.value,
+            blocks: state.after
+          }
+        },
+        undo() {
+          // 如果当前blocks前后一置，不会更新
+          data.value = {
+            ...data.value,
+            blocks: state.before
+          }
+        }
+      }
+    }
+  })
 
   const keyboardEvent = (() => {
     const keyCodes = {

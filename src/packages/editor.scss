@@ -70,7 +70,7 @@
       background-color: rgba(0, 0, 0, 0.3);
       color: #fff;
       cursor: pointer;
-      &+& {
+      & + & {
         margin-left: 3px;
       }
     }
@@ -109,6 +109,12 @@
   }
 }
 
+.editor-block-preview {
+  &::after {
+    display: none;
+  }
+}
+
 .line-x {
   position: absolute;
   top: 0;
@@ -120,4 +126,24 @@
   left: 0;
   right: 0;
   border-top: 1px dashed red;
+}
+
+// dropdown
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 2px 2px #ccc;
+  &-isShow {
+    display: block;
+  }
+  &-item {
+    line-height: 30px;
+    width: 100px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    padding-left: 4px;
+    user-select: none;
+    cursor: pointer;
+  }
 }
