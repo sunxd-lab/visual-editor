@@ -147,3 +147,23 @@
     cursor: pointer;
   }
 }
+
+.el-button {
+  transition: none;
+}
+
+.range {
+  display: inline-flex;
+  width: 220px;
+  min-height: 30px;
+  align-items: center;
+  input {
+    flex: 1;
+    width: 100%;
+    min-height: 30px;
+  }
+  span {
+    display: inline-flex;
+    margin: 0 4px;
+  }
+}

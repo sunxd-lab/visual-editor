@@ -26,7 +26,9 @@ export function useMenuDragger(containerRef, data) {
           left: e.offsetX,
           zIndex: 1,
           key: currentComponent.key,
-          alignCenter: true
+          alignCenter: true,
+          props: {},
+          model: {}
         }
       ]
     }
@@ -49,7 +51,6 @@ export function useMenuDragger(containerRef, data) {
     containerRef.value.removeEventListener('dragleave', dragleave)
     containerRef.value.removeEventListener('drop', drop)
     // 放置后订阅end
-    console.log('e');
     events.emit('end')
   }
 
